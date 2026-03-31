@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JASM - Gestión Estratégica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .gradient-blue { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-md mx-auto bg-white min-h-screen shadow-2xl overflow-hidden rounded-b-[2rem]">
+        <header class="gradient-blue text-white p-10 text-center rounded-b-[3rem] shadow-lg">
+            <h1 class="text-4xl font-black tracking-tighter">JASM</h1>
+            <p class="text-[10px] uppercase tracking-[0.3em] opacity-80">Microcréditos Estratégicos</p>
+        </header>
+
+        <div class="p-6 space-y-6">
+            <div class="bg-blue-50 p-5 rounded-2xl border-l-4 border-blue-600 card-shadow text-center">
+                <h3 class="font-bold text-blue-900 uppercase text-xs">Impulsamos tu negocio</h3>
+                <p class="text-[11px] text-blue-700 mt-1">Créditos rápidos, sin aval y con trato directo.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div class="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+                    <i class="fas fa-bolt text-blue-600 mb-2 text-xl"></i>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Rápido</p>
+                </div>
+                <div class="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+                    <i class="fas fa-university text-blue-600 mb-2 text-xl"></i>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Transferencia</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 bg-[#0f172a] p-8 text-white rounded-t-[3rem] border-t-8 border-blue-600 shadow-[0_-15px_30px_rgba(0,0,0,0.2)]">
+            <h2 class="text-xl font-bold mb-8 text-blue-400 flex items-center italic tracking-tight">
+                <i class="fas fa-user-shield mr-3 text-blue-500"></i> PANEL DE TRABAJO
+            </h2>
+            
+            <div class="space-y-6">
+                <div class="relative">
+                    <label class="text-[10px] text-slate-400 font-bold uppercase ml-1 tracking-widest">Monto a Prestar ($)</label>
+                    <input type="number" id="monto" placeholder="Ej: 2000" class="w-full bg-slate-800 p-5 rounded-2xl text-white outline-none focus:ring-2 focus:ring-blue-500 border border-slate-700 text-2xl font-black tracking-tight mt-1 transition-all">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-800/50 p-3 rounded-2xl border border-slate-700/50">
+                        <label class="block text-[9px] text-slate-500 font-bold uppercase text-center mb-1">Días (Plazo)</label>
+                        <input type="number" id="dias" value="20" class="w-full bg-transparent text-center text-xl font-bold outline-none text-white">
+                    </div>
+                    <div class="bg-slate-800/50 p-3 rounded-2xl border border-slate-700/50">
+                        <label class="block text-[9px] text-slate-500 font-bold uppercase text-center mb-1">% Interés</label>
+                        <input type="number" id="interes" value="20" class="w-full bg-transparent text-center text-xl font-bold outline-none text-white">
+                    </div>
+                </div>
+
+                <button onclick="generarPlan()" class="w-full bg-blue-600 hover:bg-blue-700 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-blue-900/40 active:scale-95 transition-all">
+                    Calcular Cuota Diaria
+                </button>
+
+                <div id="resultado" class="hidden bg-slate-800 p-6 rounded-[2rem] border border-blue-500/40 text-center animate-in fade-in zoom-in duration-300">
+                    <p class="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-1">Cobro por día:</p>
+                    <p id="cuotaFinal" class="text-5xl font-black text-white"></p>
+                    <p id="totalPagar" class="text-[9px] text-slate-500 mt-2 font-bold"></p>
+                    
+                    <button onclick="enviarRecibo()" class="mt-8 w-full bg-green-600 hover:bg-green-700 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center shadow-lg shadow-green-900/20">
+                        <i class="fab fa-whatsapp mr-2 text-xl"></i> Enviar Plan al Cliente
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-12 text-center opacity-20">
+                <p class="text-[8px] tracking-[0.6em] font-black italic">JASM SYSTEM v1.5 PREMIUM</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Esta función hace las cuentas por ti
+        function generarPlan() {
+            const monto = parseFloat(document.getElementById('monto').value);
+            const dias = parseInt(document.getElementById('dias').value);
+            const interes = parseInt(document.getElementById('interes').value);
+            
+            if(monto > 0) {
+                const total = monto + (monto * (interes / 100));
+                const cuota = total / dias;
+                
+                // Redondeamos hacia arriba para no perder centavos
+                document.getElementById('cuotaFinal').innerText = '$' + Math.ceil(cuota);
+                document.getElementById('totalPagar').innerText = 'TOTAL A RECOLECTAR: $' + total;
+                
+                const resDiv = document.getElementById('resultado');
+                resDiv.classList.remove('hidden');
+                resDiv.scrollIntoView({behavior: "smooth"});
+            }
+        }
+
+        // Esta función prepara el mensaje de WhatsApp automático
+        function enviarRecibo() {
+            const monto = document.getElementById('monto').value;
+            const cuota = document.getElementById('cuotaFinal').innerText;
+            const dias = document.getElementById('dias').value;
+            
+            const texto = `*JASM MICROCRÉDITOS*%0A_Confianza que impulsa_%0A---------------------------%0AHola, te comparto el detalle de tu crédito:%0A%0A*Monto:* $${monto}%0A*Plazo:* ${dias} días%0A*CUOTA DIARIA:* ${cuota}%0A---------------------------%0A_Favor de realizar sus pagos vía transferencia de 2:00 PM a 6:00 PM._%0A*¡Gracias por tu puntualidad!*`;
+            
+            window.open(`https://wa.me/?text=${texto}`, '_blank');
+        }
+    </script>
+</body>
+</html>
+
